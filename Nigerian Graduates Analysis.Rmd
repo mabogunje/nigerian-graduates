@@ -1,0 +1,108 @@
+---
+title: "Nigerian Graduates Analysis"
+author: "Damola Mabogunje"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+# hard code the US repo for CRAN
+r <- getOption("repos")
+r["CRAN"] <- "http://cran.us.r-project.org"
+options(repos = r)
+rm(r)
+
+install.packages("librarian");
+librarian::shelf("tidyverse", "here", "ggplot2");
+
+```
+
+## Introduction
+
+This R Markdown document is created to explore the Nigerian Graduate Destination Survey (2013 - 2017) dataset. In it, we will look through the data to answer a few questions like "What is the gender spread of this Survey?", "Which Institutions are represented?, "What are the most prominent levels of education?", and so on. From there, we might take on more difficult questions.
+
+But first, we have to prepare the dataset:
+
+
+```{r prepare_dataset}
+dataset <- read.csv(here("data/Nigerian Graduates Destination Survey (2013 -2017).csv"));
+
+glimpse(dataset);
+dataset <- dataset %>% rename(
+  gender = What.is.your.gender,
+  graduation = Year.of.graduation,
+  course = Title.of.course.studied,
+  institution = Polytechnic.University.attended,
+  degree = What.is.your.highest.level.of.education.,
+  status = What.best.describes.your.current.status.,
+  no_of_jobs = How.many.jobs.have.you.had.since.graduation.including.your.current.one.,
+  NYSC = Have.you.completed.your.NYSC.,
+  NYSC_year = If.you.answered.yes.ongoing.to.the.previous.question..what.year.did.you..or.will.you..complete.your.NYSC.,
+  NYSC_job = Did.you.get.your.first.full.time.job.through.your.NYSC.placement.,
+  first_job_level = Thinking.about.your.first.employment.after.graduation..what.was.your.job.level.,
+  first_job_role = What.is.was.your.job.role.,
+  first_job_sector = What.sector.industry.is.your.company.in...E.g..Banking..Agriculture..Telecommunication.,
+  first_job_salary = Still.thinking.about.your.first.employment..what.is.was.your.monthly.income.level.,
+  first_job_degree_needed = Did.you.need.your.higher.education.qualification.to.get.your.first.job..the.actual.qualification..not.the.subject.of.study..,
+  first_job_reason = What.was.the.most.significant.reason.for.deciding.to.take.your.first.job.,
+  job_level = Thinking.about.your.current.employment..what.is.your.job.level.,
+  job_role = What.is.your.job.role.,
+  job_sector = What.sector.industry.is.your.company.in...E.g..Banking..Agriculture..Telecommunication..1,
+  job_salary = What.is.your.current.monthly.income.level.,
+  job_degree_needed = Did.you.need.your.higher.education.qualification.to.get.this.job..the.actual.qualification..not.the.subject.of.study..,
+  job_reason = What.was.the.most.significant.reason.for.deciding.to.take.this.job.,
+  best_employer = Which.employer.in.the.country.do.you.think.offers.the.best.opportunities.for.graduates.,
+  best_employer_reason = Reason.why.,
+  best_sector = Which.sector.is.your.most.preferred.sector.to.work.in.,
+  salary_currency = What.currency.are.you.currently.paid.in.,
+  work_hours = Approximately.how.many.hours.a.day.do.you.currently.work.,
+  employment_reason = As.far.as.you.are.aware..what.was.most.important.to.your.current.employer.about.your.qualification.,
+  job_discovery = How.do.you.find.out.about.your.job.s..,
+  job_IT = Thinking.about.your.current.employment..did.you.work.for.your.employer.before.or.during.your..higher.education.study.,
+  transport = Which.form.of.transport.do.you.use.the.most.,
+  first_job_earning_power = Were.you.able.to.rent.an.apartment.or.buy.a.car.from.the.salary.you.got.from.your.first.job.,
+  study_to_job = My.course.of.study.prepared.me.well.for.employment,
+  study_to_education = My.course.of.study.prepared.me.well.for.further.studies,
+  study_benefits = Which.of.these.skills.knowledge.did.your.higher.education.prepare.you.for.
+);
+
+glimpse(dataset);
+```
+
+## What is the Gender Spread?
+
+Now, we can answer a few questions. Like, "What is the gender spread of those surveyed?"
+
+```{r gender_spread}
+dataset %>% count(gender);
+dataset %>% ggplot(aes(gender)) +
+  geom_bar();
+
+```
+
+So there are about 32 more men than women who participated in this survey, which is minor considering the over 5000 participants. There are also a negligible 3 participants that did not declare their gender.
+
+## When Did These Graduates Graduate?
+
+Now, over what years did our survey participants graduate?
+
+```{r graduate years}
+
+min(dataset$graduation);
+max(dataset$graduation);
+
+```
+
+As expected, it spans the period 2013 - 2017.
+
+## Which Institutions Were Survey Participants From?
+
+```{r participating_institutions}
+
+distinct(dataset['institution']);
+
+```
+
+It looks like students were spread across about 158 different institutions.
