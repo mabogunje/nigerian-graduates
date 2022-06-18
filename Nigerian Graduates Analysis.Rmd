@@ -27,10 +27,10 @@ But first, we have to prepare the dataset:
 
 
 ```{r prepare_dataset}
-dataset <- read.csv(here("data/Nigerian Graduates Destination Survey (2013 -2017).csv"));
+survey <- read.csv(here("data/Nigerian Graduates Destination Survey (2013 -2017).csv"));
 
-glimpse(dataset);
-dataset <- dataset %>% rename(
+glimpse(survey);
+dataset <- survey %>% rename(
   gender = What.is.your.gender,
   graduation = Year.of.graduation,
   course = Title.of.course.studied,
@@ -106,3 +106,19 @@ distinct(dataset['institution']);
 ```
 
 It looks like students were spread across about 158 different institutions.
+
+## How many of the graduates completed NYSC and secured a job from it?
+
+```{r completed and landed a job from NYSC}
+
+nysc_data <- select(dataset, starts_with("NYSC"));
+nysc_data %>% count(NYSC_job);
+nysc_data %>% ggplot(aes(x=NYSC, y=NYSC_job)) + geom_jitter();
+
+```
+
+So it looks like the data is a bit faulty because we have participants who answered that they haven't done NYSC while at the same time claiming that they got their first job through NYSC and also participants claiming that they have done NYSC while at the same time saying that they have not yet completed it. This is obvious from the plot.
+
+Similarly, obvious from the job count, is the fact that most graduates did not secure a job through NYSC. And out of the ones that say they did, a good number are still currently in the NYSC program so it is unclear whether they will be kept on post NYSC.
+
+
